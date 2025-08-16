@@ -107,3 +107,44 @@ class Sistema:
 
             self.encuestas.append(encuesta)
             print("Encuesta Creada :D")
+        
+    def responder_encuesta(self):
+        if not self.encuestas:
+            print("No hay encuestas")
+            return
+        self.mostrar_encuestas()
+        inx = int(input("Seleccione una encuesa: "))-1
+        self.encuestas[inx].responder_encuesta()
+
+    def mostrar_resultado(self):
+        if not self.encuestas:
+            print("No hay encustas para mostrar")
+            return
+        self.mostrar_encuestas()
+        inx = int(input("Seleccione una encuesa: "))-1
+        self.encuestas[inx].mostrar_resultados()
+
+    def mostrar_encuestas(self):
+        print(f"=== Encuestas Disponibles ===")
+        for i in range(len(self.encuestas)):
+            print(f"{i + 1}. {self.encuestas[i].titulo}")
+
+    def menu(self):
+        while True:
+            print("\n=-= Sistema de Encuestas =-=\n1. Crear encuesta\n2. Responder encuesta\n3. Mostrar resultado\n0. Salir")
+            opciones = input("selecione una opcion: ")
+
+            if opciones == "1":
+                self.crear_encuesta()
+            elif opciones == "2":
+                self.responder_encuesta()
+            elif opciones == "3":
+                self.mostrar_resultado()
+            elif opciones == "0":
+                print("Saliendo del sistema de encuestas. Adios!!!")
+                break
+            else:
+                print("Seleccione una opcion del sistema de encuestas.")
+
+p = Sistema()
+p.menu()
