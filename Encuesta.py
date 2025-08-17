@@ -1,12 +1,12 @@
 class Pregunta: #Clase Principal, plantilla para cualquier tipo de pregunta
-    def _init_(self, texto):
+    def __init__(self, texto):
         self.texto = texto
         self.respuestas = []
 
     def registrar_respuesta(self, respuesta): #Metodo donde se registrar respuesas 
         self.respuestas.append(respuesta) #Agrega las prespuestas a la lista slef.repuestas
 
-    def mostrar_resultado(self): #Imprimer el texto de la pregunta y las respuestas guardadas
+    def mostrar_resultados(self): #Imprimer el texto de la pregunta y las respuestas guardadas
         print(f"Pregunta: {self.texto}")
         if not self.respuestas: #Si no ecuentra respuestas imprime lo de abajo
             print("No hay respuestas guardadas")
@@ -17,7 +17,7 @@ class Pregunta: #Clase Principal, plantilla para cualquier tipo de pregunta
 
 #Calse hijas dedicada a realizar solo preguntas con opciones.      
 class PreguntasOpcionMultiple(Pregunta): 
-    def _init_(self, texto, opciones):
+    def __init__(self, texto, opciones):
         super()._init_(texto)
         self.opciones = opciones
 
@@ -27,24 +27,24 @@ class PreguntasOpcionMultiple(Pregunta):
         else:
             print("Opcion no encontrada")
     
-    def mostrar_resultado(self):
+    def mostrar_resultados(self):
         print(f"Pregunta de Opcion multiple: {self.texto}\nOpciones:")
         for i in range(len(self.opciones)):
             print(f"{i + 1}. {self.opciones[i]}")
-        super().mostrar_resultado()
+        super().mostrar_resultados()
 
 #Calses Hijas para realizar solo preguntas con respuesta de texto.
 class PreguntaTextoLibre(Pregunta):
     def registrar_respuesta(self, texto):
-        self.texto.append(texto)
+        self.respuestas.append(texto) #corregi esto ya que me da un erro y crashea. ver con los anteriores commits
 
-    def mostrar_resultado(self):
+    def mostrar_resultados(self):
         print(f"Pregunta de texto libre: {self.texto}")
-        return super().mostrar_resultado()
+        super().mostrar_resultados()
 
 #Clase Encuesta, Muestra las preguntas, permite agregar preguntas y responder. Encargado del flujo de la encuesta
 class Encuesta:
-    def _init_(self, titulo):
+    def __init__(self, titulo):
         self.titulo = titulo
         self.preguntas = []
 
@@ -61,8 +61,8 @@ class Encuesta:
         for preguntas in self.preguntas:
             if isinstance(preguntas, PreguntasOpcionMultiple):
                 print(f"------\n{preguntas.texto}")
-                for i in range(len(preguntas.texto)):
-                    print(f"{i + 1}. {self.preguntas[i]}")
+                for i in range(len(preguntas.opciones)): #cambie el metodo ya que recorria el texto
+                    print(f"{i + 1}. {preguntas.opciones[i]}") #lo mismo, cambie texto por opciones
                 try:
                     eleccion = int(input("Seleccione una opcion: ")) -1
                     preguntas.registrar_respuesta(eleccion)
@@ -88,25 +88,29 @@ class Sistema:
 
         while True:
             print("== Tipo de Preguntas ==")
-            tipo = input("1. Opcion Multiple | 2. Texto Libre | 0. Salir")
+            tipo = input("0. Salir | 1. Opcion Multiple | 2. Texto Libre\n")
             if tipo == "1":
                 texto = input("Escriba la Pregunta: ")
                 opciones = []
                 while True:
-                    opciones2 = input("Agrege una opcion <<Escriba 0 para terminar>>: ")
-                    if opciones2 == "0":
+                    opcion = input("Agrege una opcion <<Escriba 0 para terminar>>: ")
+                    if opcion == "0":
                         break
-                    opciones.append(opciones2)
-
+                    opciones.append(opcion)
                 encuesta.agregar_pregunta(PreguntasOpcionMultiple(texto, opciones))
+
             elif tipo == "2":
                 texto = input("Escriba la Pregunta: ")
                 encuesta.agregar_pregunta(PreguntaTextoLibre(texto))
+                
+            elif tipo == "0": #Me falto agregar la opcion de salir del bucle
+                break 
             else:
                 print("Opcion no valida. Seleccione una de las 3 opciones.")
 
-            self.encuestas.append(encuesta)
-            print("Encuesta Creada :D")
+        #movi estas dos lineas un espacio para atras ya que se ejecutava todas las veces que se crea una pregunta y no solo una vez.
+        self.encuestas.append(encuesta)
+        print("Encuesta Creada :D")
         
     def responder_encuesta(self):
         if not self.encuestas:
@@ -116,7 +120,7 @@ class Sistema:
         inx = int(input("Seleccione una encuesa: "))-1
         self.encuestas[inx].responder_encuesta()
 
-    def mostrar_resultado(self):
+    def mostrar_resultados(self):
         if not self.encuestas:
             print("No hay encustas para mostrar")
             return
@@ -131,7 +135,7 @@ class Sistema:
 
     def menu(self):
         while True:
-            print("\n=-= Sistema de Encuestas =-=\n1. Crear encuesta\n2. Responder encuesta\n3. Mostrar resultado\n0. Salir")
+            print("\n=-= Sistema de Encuestas =-=\n0. Salir\n1. Crear encuesta\n2. Responder encuesta\n3. Mostrar resultado")
             opciones = input("selecione una opcion: ")
 
             if opciones == "1":
@@ -141,10 +145,16 @@ class Sistema:
             elif opciones == "3":
                 self.mostrar_resultado()
             elif opciones == "0":
-                print("Saliendo del sistema de encuestas. Adios!!!")
+                print("\nSaliendo del sistema de encuestas. Adios!!!")
                 break
             else:
                 print("Seleccione una opcion del sistema de encuestas.")
 
 p = Sistema()
 p.menu()
+
+'''
+Errores al tratar de ejecutarlo.
+problema con los constructores. los tenia asi = _init_.
+Error al unificar el nombres de los metodos, use metodos en singular y plural
+'''
