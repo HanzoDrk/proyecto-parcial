@@ -34,3 +34,12 @@ class PreguntasOpcionMultiple(Pregunta):
         for i in range(len(self.opciones)):
             print(f"{i + 1}. {self.opciones[i]}")
         super().mostrar_resultados()
+
+#Calses Hijas para realizar solo preguntas con respuesta de texto.
+class PreguntaTextoLibre(Pregunta):
+    def registrar_respuesta(self, texto):
+        self.respuestas.append(texto) #corregi esto ya que me da un erro y crashea. ver con los anteriores commits
+
+    def mostrar_resultados(self):
+        print(f"Pregunta de texto libre: {self.texto}")
+        super().mostrar_resultados()
